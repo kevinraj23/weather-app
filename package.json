@@ -1,0 +1,26 @@
+{
+  "name": "weather-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "js2xmlparser": "^5.0.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "leaflet": "^1.9.4",
+    "next": "16.2.10",
+    "pdfkit": "^0.19.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-leaflet": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10"
+  }
+}
