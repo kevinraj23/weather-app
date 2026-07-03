@@ -81,10 +81,12 @@ const detailIcons = {
 export default function CurrentWeather({ data, unit = 'celsius', onUnitChange }) {
   const [isDay, setIsDay] = useState(true);
   
-  // Update isDay based on data
-  if (data?.is_day !== undefined) {
-    setIsDay(data.is_day === 1);
-  }
+  // Update isDay based on data - use useEffect to avoid render-loop
+  useEffect(() => {
+    if (data?.is_day !== undefined) {
+      setIsDay(data.is_day === 1);
+    }
+  }, [data?.is_day]);
   
   const weatherInfo = data ? getWeatherInfo(data.weather_code, isDay) : { description: '—', icon: 'clear', group: 'clear' };
   const gradientClass = data ? getWeatherGradient(weatherInfo.group, isDay) : 'gradient-night';
