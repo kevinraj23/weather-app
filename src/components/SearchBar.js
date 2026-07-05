@@ -172,7 +172,7 @@ export default function SearchBar({ onSearch, onLocationDetected, disabled = fal
               flex: 1, 
               fontSize: '1.1rem',
               padding: 'var(--spacing-md) var(--spacing-lg)',
-              paddingRight: '110px'
+              paddingRight: '140px'
             }}
             placeholder="City, ZIP, coordinates, or landmark (e.g., New York, 10001, 40.71,-74.00, Eiffel Tower)"
             value={query}
@@ -192,7 +192,7 @@ export default function SearchBar({ onSearch, onLocationDetected, disabled = fal
           {inputType && (
             <span className="input-type-badge badge badge-blue" style={{ 
               position: 'absolute', 
-              right: '100px', 
+              right: '96px', 
               top: '50%', 
               transform: 'translateY(-50%)',
               fontSize: '0.65rem',
@@ -221,7 +221,7 @@ export default function SearchBar({ onSearch, onLocationDetected, disabled = fal
         {isLoading ? (
           <span className="input-loading" style={{ 
             position: 'absolute', 
-            right: '56px', 
+            right: '52px', 
             top: '50%', 
             transform: 'translateY(-50%)',
             display: 'flex',
@@ -240,7 +240,7 @@ export default function SearchBar({ onSearch, onLocationDetected, disabled = fal
             onClick={handleGeolocation}
             disabled={disabled}
             aria-label="Use my current location"
-            style={{ position: 'absolute', right: '56px', top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}
+            style={{ position: 'absolute', right: '52px', top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <circle cx="12" cy="12" r="3" />

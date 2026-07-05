@@ -2,31 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import LoadingSpinner from './LoadingSpinner';
-import dynamic from 'next/dynamic';
-
-const InteractiveMap = dynamic(
-  () => import('./InteractiveMap'),
-  {
-    ssr: false,
-    loading: () => (
-      <div style={{ 
-        height: '350px', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        background: 'var(--glass-bg)',
-        borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--glass-border)'
-      }}>
-        <LoadingSpinner size="md" text="Loading interactive map..." />
-      </div>
-    )
-  }
-);
 
 const TABS = [
   { id: 'google-maps', label: '📍 Google Maps', icon: 'map' },
-  { id: 'interactive-map', label: '🗺️ Interactive', icon: 'globe' },
   { id: 'about', label: '📖 About', icon: 'info' },
   { id: 'videos', label: '🎬 Videos', icon: 'play' },
   { id: 'country', label: '🌍 Country', icon: 'flag' },
@@ -129,49 +107,26 @@ export default function LocationInfo({ location, weather }) {
         aria-labelledby="tab-google-maps"
         hidden={activeTab !== 'google-maps'}
         className="tab-panel"
-        style={{ padding: 'var(--spacing-lg)', minHeight: '300px' }}
+        style={{ padding: 0 }}
       >
         {info.map && (
-          <div style={{ 
-            borderRadius: 'var(--radius-md)', 
-            overflow: 'hidden',
-            border: '1px solid var(--glass-border)',
-            background: 'var(--glass-bg)'
-          }}>
-            <iframe
-              title={`Google Maps - ${location.name}`}
-              src={`https://maps.google.com/maps?q=${info.map.lat},${info.map.lon}&z=${info.map.zoom}&output=embed`}
-              width="100%"
-              height="400"
-              style={{ border: 'none', display: 'block' }}
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              sandbox="allow-scripts allow-same-origin allow-popups"
-            />
-          </div>
+          <iframe
+            title={`Google Maps - ${location.name}`}
+            src={`https://maps.google.com/maps?q=${info.map.lat},${info.map.lon}&z=${info.map.zoom}&output=embed`}
+            width="100%"
+            height="450"
+            style={{ border: 'none', display: 'block' }}
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+            sandbox="allow-scripts allow-same-origin allow-popups"
+          />
         )}
         {!info.map && (
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: 'var(--spacing-xl)' }}>
             Map not available
           </div>
         )}
-      </div>
-
-      {/* Interactive Map Tab (Leaflet) */}
-      <div 
-        role="tabpanel" 
-        id="panel-interactive-map" 
-        aria-labelledby="tab-interactive-map"
-        hidden={activeTab !== 'interactive-map'}
-        className="tab-panel"
-        style={{ padding: 'var(--spacing-lg)' }}
-      >
-        <InteractiveMap 
-          lat={location.lat} 
-          lon={location.lon} 
-          name={location.name}
-        />
       </div>
 
       {/* About Tab (Wikipedia) */}
