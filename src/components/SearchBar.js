@@ -170,9 +170,9 @@ export default function SearchBar({ onSearch, onLocationDetected, disabled = fal
             className="input search-input"
             style={{ 
               flex: 1, 
-              paddingRight: '56px',
               fontSize: '1.1rem',
-              padding: 'var(--spacing-md) var(--spacing-lg)'
+              padding: 'var(--spacing-md) var(--spacing-lg)',
+              paddingRight: '110px'
             }}
             placeholder="City, ZIP, coordinates, or landmark (e.g., New York, 10001, 40.71,-74.00, Eiffel Tower)"
             value={query}
@@ -203,23 +203,6 @@ export default function SearchBar({ onSearch, onLocationDetected, disabled = fal
             </span>
           )}
           
-          {/* Loading spinner inside input */}
-          {isLoading && (
-            <span className="input-loading" style={{ 
-              position: 'absolute', 
-              right: '56px', 
-              top: '50%', 
-              transform: 'translateY(-50%)',
-              display: 'flex',
-              alignItems: 'center'
-            }}>
-              <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--accent-blue)' }}>
-                <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
-                <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
-              </svg>
-            </span>
-          )}
-          
           <button
             type="submit"
             className="btn btn-primary btn-icon"
@@ -234,20 +217,37 @@ export default function SearchBar({ onSearch, onLocationDetected, disabled = fal
           </button>
         </form>
         
-        {/* Geolocation button */}
-        <button
-          type="button"
-          className="btn btn-secondary btn-icon"
-          onClick={handleGeolocation}
-          disabled={disabled || isLoading}
-          aria-label="Use my current location"
-          style={{ position: 'absolute', right: '56px', top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M12 2v2m0 16v2M2 12h2m16 0h2" />
-          </svg>
-        </button>
+        {/* Geolocation button or loading spinner */}
+        {isLoading ? (
+          <span className="input-loading" style={{ 
+            position: 'absolute', 
+            right: '56px', 
+            top: '50%', 
+            transform: 'translateY(-50%)',
+            display: 'flex',
+            alignItems: 'center',
+            zIndex: 2
+          }}>
+            <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--accent-blue)' }}>
+              <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+              <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
+            </svg>
+          </span>
+        ) : (
+          <button
+            type="button"
+            className="btn btn-secondary btn-icon"
+            onClick={handleGeolocation}
+            disabled={disabled}
+            aria-label="Use my current location"
+            style={{ position: 'absolute', right: '56px', top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M12 2v2m0 16v2M2 12h2m16 0h2" />
+            </svg>
+          </button>
+        )}
         
         {/* Suggestions dropdown */}
         {showSuggestions && suggestions.length > 0 && (
