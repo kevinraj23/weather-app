@@ -74,7 +74,7 @@ export default function FiveDayForecast({ forecast, unit = 'celsius', isLoading 
           overflowX: 'auto', 
           padding: 'var(--spacing-sm) var(--spacing-md) var(--spacing-md)',
           scrollSnapType: 'x mandatory',
-          '-webkit-overflow-scrolling': 'touch',
+          WebkitOverflowScrolling: 'touch',
           scrollbarWidth: 'thin',
           scrollbarColor: 'var(--glass-border) transparent',
           margin: 'calc(-1 * var(--spacing-sm)) calc(-1 * var(--spacing-lg)) var(--spacing-sm)'

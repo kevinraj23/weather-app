@@ -7,7 +7,10 @@ import FiveDayForecast from '@/components/FiveDayForecast';
 import LocationInfo from '@/components/LocationInfo';
 import ErrorMessage from '@/components/ErrorMessage';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import LinkedInIcon from '@/components/LinkedInIcon';
 import { toastSuccess, toastError } from '@/components/Toast';
+
+const LINKEDIN_URL = 'https://www.linkedin.com/school/pmaccelerator/posts/?feedView=all';
 
 export default function Home() {
   const [location, setLocation] = useState(null);
@@ -253,6 +256,50 @@ export default function Home() {
             <LoadingSpinner size="lg" text="Loading weather data..." />
           </section>
         )}
+      </div>
+
+      {/* Footer with attribution */}
+      <footer style={{
+        marginTop: 'var(--spacing-2xl)',
+        padding: 'var(--spacing-xl)',
+        textAlign: 'center',
+        borderTop: '1px solid var(--glass-border)',
+        background: 'var(--glass-bg)',
+        backdropFilter: 'var(--glass-blur)',
+        WebkitBackdropFilter: 'var(--glass-blur)'
+      }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <p style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '1.1rem', marginBottom: 'var(--spacing-sm)' }}>
+            Built by KEVIN R
+          </p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: 'var(--spacing-md)' }}>
+            This weather dashboard was created as part of the <strong>PM Accelerator</strong> program.
+          </p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: 'var(--spacing-md)' }}>
+            PM Accelerator is a career accelerator program for Product Managers, offering hands-on training, mentorship, and real-world project experience to help professionals break into and advance in product management roles.
+          </p>
+          <a 
+            href={LINKEDIN_URL} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 'var(--spacing-sm)',
+              color: 'var(--accent-blue)',
+              fontWeight: 500,
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+              transition: 'color var(--transition-fast)'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-orange)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--accent-blue)'}
+          >
+            <LinkedInIcon />
+            Visit PM Accelerator on LinkedIn
+          </a>
+        </div>
+      </footer>
       </div>
     </div>
   );

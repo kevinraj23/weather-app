@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import WeatherIcon from './WeatherIcon';
 import { getWeatherInfo, getWeatherGradient } from '@/lib/weatherCodes';
 import { formatTime, getWindDirection, getUVSeverity, celsiusToFahrenheit, formatNumber } from '@/lib/utils';
