@@ -161,7 +161,7 @@ export default function SearchBar({ onSearch, onLocationDetected, disabled = fal
 
   return (
     <div className="search-bar-container" style={{ width: '100%', maxWidth: '720px', margin: '0 auto' }}>
-      <div className="input-wrapper" style={{ position: 'relative' }} ref={inputRef}>
+      <div className="input-wrapper" style={{ position: 'relative', zIndex: 10 }} ref={inputRef}>
         <form onSubmit={handleSubmit} className="search-form" style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
           <label htmlFor="location-search" className="visually-hidden">Search location</label>
           <input
