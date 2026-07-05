@@ -119,7 +119,6 @@ export default function LocationInfo({ location, weather }) {
             loading="lazy"
             allowFullScreen
             referrerPolicy="no-referrer-when-downgrade"
-            sandbox="allow-scripts allow-same-origin allow-popups"
           />
         )}
         {!info.map && (
