@@ -338,7 +338,6 @@ export default function LocationInfo({ location, weather }) {
               gap: 'var(--spacing-md)' 
             }}>
               <CountryDetail label="Capital" value={info.country.capital} icon="capital" />
-              <CountryDetail label="Population" value={info.country.population ? info.country.population.toLocaleString() : '—'} icon="users" />
               <CountryDetail label="Region" value={info.country.region} icon="globe" />
               <CountryDetail label="Subregion" value={info.country.subregion} icon="map-pin" />
               <CountryDetail label="Languages" value={info.country.languages} icon="languages" />

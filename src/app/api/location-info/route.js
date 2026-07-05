@@ -122,7 +122,11 @@ async function fetchCountryInfo(locationName, countryParam) {
     const data = await response.json();
     if (!data || !data.length) return null;
     
-    const country = data[0];
+    // Find exact match (case-insensitive) to prevent "India" matching "British Indian Ocean Territory"
+    let country = data.find(c => 
+      c.name?.toLowerCase() === countryName.toLowerCase() || 
+      c.nativeName?.toLowerCase() === countryName.toLowerCase()
+    ) || data[0];
     
     return {
       name: country.name,
