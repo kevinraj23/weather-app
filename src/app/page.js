@@ -103,6 +103,28 @@ export default function Home() {
     fetchWeather(locationData);
   }, [fetchWeather]);
 
+  const handleQuickSearch = useCallback(async (cityName) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/geocode?query=${encodeURIComponent(cityName)}`);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Location not found');
+      }
+      if (data.results && data.results.length > 0) {
+        const locationData = data.results[0];
+        fetchWeather(locationData);
+      }
+    } catch (err) {
+      console.error('Quick search error:', err);
+      setError(err.message || 'Location not found');
+      toastError('Error', err.message || 'Location not found');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchWeather]);
+
   const handleRetry = useCallback(() => {
     if (location) {
       fetchWeather(location);
@@ -235,7 +257,7 @@ export default function Home() {
                 <button
                   key={city}
                   className="btn btn-secondary btn-sm"
-                  onClick={() => handleSearch({ name: city, lat: 0, lon: 0, display_name: city })}
+                  onClick={() => handleQuickSearch(city)}
                   style={{ opacity: 0.7 }}
                 >
                   {city}

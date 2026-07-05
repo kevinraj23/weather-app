@@ -5,6 +5,7 @@ export async function GET(request) {
   const name = searchParams.get('name');
   const lat = searchParams.get('lat');
   const lon = searchParams.get('lon');
+  const country = searchParams.get('country');
   
   if (!name || !lat || !lon) {
     return NextResponse.json(
@@ -27,8 +28,8 @@ export async function GET(request) {
     const results = await Promise.allSettled([
       // Wikipedia summary
       fetchWikipedia(name),
-      // REST Countries (get country code from name)
-      fetchCountryInfo(name),
+      // REST Countries (get country code from name or country parameter)
+      fetchCountryInfo(name, country),
     ]);
     
     const [wikiResult, countryResult] = results;
@@ -104,13 +105,13 @@ async function searchWikipedia(query) {
   }
 }
 
-async function fetchCountryInfo(locationName) {
+async function fetchCountryInfo(locationName, countryParam) {
   try {
-    // Extract country name from location
-    const countryName = locationName.split(',').pop()?.trim();
+    // Prioritize the countryParam passed from search results, fallback to splitting
+    const countryName = countryParam || locationName.split(',').pop()?.trim();
     if (!countryName) return null;
     
-    const url = `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fields=name,capital,population,region,languages,currencies,flags,cca2`;
+    const url = `https://countries.dev/name/${encodeURIComponent(countryName)}`;
     const response = await fetch(url, {
       headers: { 'Accept': 'application/json' },
       next: { revalidate: 86400 },
@@ -119,22 +120,22 @@ async function fetchCountryInfo(locationName) {
     if (!response.ok) return null;
     
     const data = await response.json();
-    if (!data.length) return null;
+    if (!data || !data.length) return null;
     
     const country = data[0];
     
     return {
-      name: country.name?.common,
-      officialName: country.name?.official,
-      capital: country.capital?.[0],
+      name: country.name,
+      officialName: country.nativeName || country.name,
+      capital: country.capital,
       population: country.population,
       region: country.region,
       subregion: country.subregion,
-      languages: country.languages ? Object.values(country.languages).join(', ') : null,
-      currencies: country.currencies ? Object.entries(country.currencies).map(([code, info]) => `${code}: ${info.name} (${info.symbol})`).join(', ') : null,
+      languages: country.languages ? country.languages.map(l => l.name).join(', ') : null,
+      currencies: country.currencies ? country.currencies.map(c => `${c.code}: ${c.name} (${c.symbol})`).join(', ') : null,
       flag: country.flags?.png || country.flags?.svg,
       flagEmoji: country.flag,
-      code: country.cca2?.toLowerCase(),
+      code: country.alpha2Code?.toLowerCase(),
     };
   } catch (error) {
     console.error('Country info fetch error:', error);

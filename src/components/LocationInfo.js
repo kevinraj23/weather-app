@@ -1,7 +1,28 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import LoadingSpinner from './LoadingSpinner';
+import dynamic from 'next/dynamic';
+
+const InteractiveMap = dynamic(
+  () => import('./InteractiveMap'),
+  {
+    ssr: false,
+    loading: () => (
+      <div style={{ 
+        height: '350px', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'var(--glass-bg)',
+        borderRadius: 'var(--radius-md)',
+        border: '1px solid var(--glass-border)'
+      }}>
+        <LoadingSpinner size="md" text="Loading interactive map..." />
+      </div>
+    )
+  }
+);
 
 const TABS = [
   { id: 'google-maps', label: '📍 Google Maps', icon: 'map' },
@@ -16,8 +37,6 @@ export default function LocationInfo({ location, weather }) {
   const [info, setInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const leafletMapRef = useRef(null);
-  const leafletInitialized = useRef(false);
 
   useEffect(() => {
     if (!location?.lat || !location?.lon || !location?.name) {
@@ -31,8 +50,9 @@ export default function LocationInfo({ location, weather }) {
       setError(null);
       
       try {
+        const countryVal = location.country || '';
         const response = await fetch(
-          `/api/location-info?name=${encodeURIComponent(location.name)}&lat=${location.lat}&lon=${location.lon}`
+          `/api/location-info?name=${encodeURIComponent(location.name)}&lat=${location.lat}&lon=${location.lon}&country=${encodeURIComponent(countryVal)}`
         );
         
         if (!response.ok) {
@@ -51,35 +71,6 @@ export default function LocationInfo({ location, weather }) {
 
     fetchInfo();
   }, [location]);
-
-  // Initialize Leaflet map when interactive tab is active
-  useEffect(() => {
-    if (activeTab !== 'interactive-map' || !location?.lat || !location?.lon) return;
-    
-    const initLeaflet = async () => {
-      if (leafletInitialized.current || !leafletMapRef.current) return;
-      
-      try {
-        // Dynamic import for SSR safety
-        const L = await import('leaflet');
-        const { MapContainer, TileLayer, Marker, Popup } = await import('react-leaflet');
-        
-        // Fix default marker icon
-        delete L.Icon.Default.prototype._getIconUrl;
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        });
-        
-        leafletInitialized.current = true;
-      } catch (err) {
-        console.error('Leaflet init error:', err);
-      }
-    };
-    
-    initLeaflet();
-  }, [activeTab, location]);
 
   if (isLoading) {
     return (
@@ -180,7 +171,6 @@ export default function LocationInfo({ location, weather }) {
           lat={location.lat} 
           lon={location.lon} 
           name={location.name}
-          ref={leafletMapRef}
         />
       </div>
 
@@ -368,103 +358,6 @@ export default function LocationInfo({ location, weather }) {
   );
 }
 
-// Interactive Map Component (Leaflet)
-function InteractiveMap({ lat, lon, name }) {
-  const [MapComponent, setMapComponent] = useState(null);
-  const [mapError, setMapError] = useState(null);
-
-  useEffect(() => {
-    import('react-leaflet').then(module => {
-      setMapComponent(() => ({
-        MapContainer: module.MapContainer,
-        TileLayer: module.TileLayer,
-        Marker: module.Marker,
-        Popup: module.Popup,
-      }));
-    }).catch(err => {
-      console.error('Leaflet import error:', err);
-      setMapError(err.message);
-    });
-  }, []);
-
-  // Fix Leaflet default marker icon
-  useEffect(() => {
-    if (MapComponent) {
-      import('leaflet').then(L => {
-        delete L.Icon.Default.prototype._getIconUrl;
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        });
-      });
-    }
-  }, [MapComponent]);
-
-  if (mapError) {
-    return (
-      <div style={{ 
-        height: '350px', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        color: 'var(--text-muted)',
-        background: 'var(--glass-bg)',
-        borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--glass-border)'
-      }}>
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ marginBottom: 'var(--spacing-md)', opacity: 0.5 }} aria-hidden="true">
-          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
-          <line x1="8" y1="2" x2="8" y2="18" />
-          <line x1="16" y1="6" x2="16" y2="22" />
-        </svg>
-        <p>Interactive map unavailable</p>
-        <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>Leaflet failed to load</p>
-      </div>
-    );
-  }
-
-  if (!MapComponent) {
-    return (
-      <div style={{ 
-        height: '350px', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        color: 'var(--text-muted)',
-        background: 'var(--glass-bg)',
-        borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--glass-border)'
-      }}>
-        <LoadingSpinner size="md" text="Loading interactive map..." />
-      </div>
-    );
-  }
-
-  const position = [lat, lon];
-  const { MapContainer, TileLayer, Marker, Popup } = MapComponent;
-
-  return (
-    <MapContainer 
-      center={position} 
-      zoom={10} 
-      style={{ height: '350px', borderRadius: 'var(--radius-md)' }}
-      scrollWheelZoom={true}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <Marker position={position}>
-        <Popup>
-          <strong>{name}</strong><br />
-          {lat.toFixed(4)}, {lon.toFixed(4)}
-        </Popup>
-      </Marker>
-    </MapContainer>
-  );
-}
 
 function CountryDetail({ label, value, icon }) {
   return (
